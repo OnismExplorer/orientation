@@ -3,7 +3,6 @@ package com.code.orientation.utils;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.code.orientation.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class SequenceUtils implements IdentifierGenerator {
 
     /** 初始偏移时间戳 */
-    private static final long OFFSET = 1672502400L;
+    private static final long OFFSET = 1672502400;
 
     /** 机器id (0~15 保留 16~31作为备份机器) */
     private static final long WORKER_ID;
@@ -52,7 +51,6 @@ public class SequenceUtils implements IdentifierGenerator {
 
     static {
         // 初始化机器ID
-        // 伪代码: 由你的配置文件获取节点ID
 
         if (workerId < 0 || workerId > WORKER_ID_MAX) {
             throw new CustomException(String.format("worker-id [%d] 越界, 有效范围: 0 ~ %d ", workerId, WORKER_ID_MAX));

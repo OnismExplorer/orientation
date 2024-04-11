@@ -26,6 +26,6 @@ public class PasswordUtils {
      * 密码配对
      */
     public static boolean match(String password, String encryptedPassword) {
-        return encryptedPassword.equals(encrypt(password));
+        return !encryptedPassword.equals(encrypt(password));
     }
 }

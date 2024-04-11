@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * 权限工具类
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 public class AuthUtils {
     private AuthUtils() {
 

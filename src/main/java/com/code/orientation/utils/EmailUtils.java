@@ -21,11 +21,15 @@ import java.util.regex.Pattern;
 @Component
 public class EmailUtils {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
     private String sendMailer;
+
+    @Autowired
+    public EmailUtils(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     /**
      * 判断邮箱是否合法
@@ -34,7 +38,7 @@ public class EmailUtils {
         if (StringUtils.isBlank(email)) {
             throw new CustomException(CodeEnum.EMAIL_EMPTY);
         }
-        if (!Pattern.matches("^(\\w+([-.][A-Za-z0-9]+)*){3,18}@\\w+([-.][A-Za-z0-9]+)*\\.\\w+([-.][A-Za-z0-9]+)*$", email)) {
+        if (!Pattern.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", email)) {
             throw new CustomException(CodeEnum.EMAIL_FORMAT_ERROR);
         }
     }
