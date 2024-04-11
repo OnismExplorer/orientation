@@ -94,7 +94,18 @@ public enum CodeEnum {
     NOT_FOUND_ACADEMY(266,"未找到学院信息！"),
     UNKNOWN_GENDER(267,"未知性别！"),
     NOT_FOUND_ROLE(268,"未找到该角色！"),
-    EXPORT_FAILED(277,"导出失败！");
+    EXPORT_FAILED(277,"导出失败！"),
+    NOT_FOUND_STUDENT(278,"未找到该学生信息！" ),
+    ALREADY_REGISTERED(279,"该生已注册，请勿重复操作！"),
+    FORBIDDEN_ERROR(281,"学生账号，请先删除该学生！"),
+    NOT_FOUND_TASK(288,"任务不存在或已被删除！" ),
+    NOT_FOUND_ACTIVITY(289,"活动不存在或已被删除！"),
+    NOT_FOUND_PRIZE(299,"奖品不存在或已被删除！"),
+    EMAIL_EXIST(278,"邮箱已存在！" ),
+    FILE_NOT_FOUND(279,"文件不存在！"),
+    PARSING_FAILED(222, "图片解析失败"),
+    ENCODE_OVERDUE(228,"二维码已过期，请重新扫描！" ),
+    ENCODE_INVALID(276, "此二维码无效！");
 
     private final int code;
     private final String msg;

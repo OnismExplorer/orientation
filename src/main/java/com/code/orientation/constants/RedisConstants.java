@@ -38,7 +38,11 @@ public enum RedisConstants {
      */
     EMAIL_CODE("Email:code:", 300L, TimeUnit.SECONDS),
 
-    USER_TOKEN("User:token:", -1L,TimeUnit.SECONDS );
+    USER_TOKEN("User:token:", -1L,TimeUnit.SECONDS ),
+    /**
+     * 活动二维码
+     */
+    ACTIVITY_ENCODE("Activity:id:",10L , TimeUnit.SECONDS);
     /**
      * 键
      */
