@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
         implements StudentService {
 
-    @Lazy
+
     private final AcademyService academyService;
 
     private final UserService userService;
@@ -46,6 +46,7 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
 
     private final RoleService roleService;
 
+    @Lazy
     @Autowired
     public StudentServiceImpl(AcademyService academyService, UserService userService, UserRoleService userRoleService, RoleService roleService) {
         this.academyService = academyService;

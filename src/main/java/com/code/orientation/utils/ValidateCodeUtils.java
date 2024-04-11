@@ -10,6 +10,10 @@ import java.util.Random;
  */
 public class ValidateCodeUtils {
 
+    private ValidateCodeUtils(){
+
+    }
+
     static final Random random = new Random();
 
     /**
@@ -18,7 +22,7 @@ public class ValidateCodeUtils {
      * @param length 声场验证码长度为4位或者6位
      */
     public static Integer generateValidateCodeUtils(int length) {
-        Integer code = null;
+        int code;
         if (length == 4) {
             code = random.nextInt(9999);
             if (code < 1000) {

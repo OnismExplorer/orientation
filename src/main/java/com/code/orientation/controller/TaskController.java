@@ -60,6 +60,12 @@ public class TaskController extends BaseController<TaskService, Task, TaskDTO, L
                                  @RequestParam(required = false) String material){
         return taskService.finish(id,uid,material);
     }
+
+    @Operation(summary = "检测用户任务状态")
+    @GetMapping("/detect")
+    public Result<Integer> detect(@RequestParam Long id,@RequestParam Long uid) {
+        return Result.success(taskService.detect(id,uid));
+    }
     @Override
     protected Class<Task> createInstance() {
         return Task.class;

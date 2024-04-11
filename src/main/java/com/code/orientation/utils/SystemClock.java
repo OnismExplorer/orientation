@@ -1,8 +1,7 @@
 package com.code.orientation.utils;
+
 import com.code.orientation.exception.CustomException;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -14,18 +13,9 @@ import java.util.concurrent.atomic.AtomicLong;
  **/
 public class SystemClock {
 
-    /**
-     *
-     */
     private final long period;
-    /**
-     *
-     */
     private final AtomicLong now;
 
-    /**
-     *
-     */
     private SystemClock(long period) {
         this.period = period;
         this.now = new AtomicLong(System.currentTimeMillis());
@@ -33,36 +23,21 @@ public class SystemClock {
     }
 
     /**
-     * 枚举单例法
-     */
-    public enum SystemClockEnum {
-        /**
-         * 系统时钟
-         */
-        SYSTEM_CLOCK;
-        private volatile SystemClock systemClock;
-        SystemClockEnum() {
-        }
-        public synchronized SystemClock getInstance() {
-            if (systemClock == null) {
-                systemClock = new SystemClock(1);
-            }
-            return systemClock;
-        }
-    }
-
-    /**
-     * 获取单例对象
-     */
-    private static SystemClock getInstance() {
-        return SystemClockEnum.SYSTEM_CLOCK.getInstance();
-    }
-
-    /**
-     * 获取当前毫秒时间戳
+     * 获取当前时间戳
+     *
+     * @return long
      */
     public static long now() {
         return getInstance().now.get();
+    }
+
+    /**
+     * 获取实例对象
+     *
+     * @return {@link SystemClock}
+     */
+    private static SystemClock getInstance() {
+        return SystemClockHolder.INSTANCE;
     }
 
     /**
@@ -70,7 +45,6 @@ public class SystemClock {
      */
     private void scheduleClockUpdating() {
         ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(
-                // 核心线程数
                 1,
                 runnable -> {
                     Thread thread = new Thread(runnable, "System Clock");
@@ -83,15 +57,15 @@ public class SystemClock {
             try {
                 now.set(System.currentTimeMillis());
             } catch (Exception e) {
-                // 处理异常，可以记录日志等
-                e.printStackTrace();
-                throw new CustomException(e);
+                throw new CustomException(e.getMessage());
             }
         }, 0, period, TimeUnit.MILLISECONDS);
 
-        // 在程序退出时调用关闭线程池
         Runtime.getRuntime().addShutdownHook(new Thread(scheduler::shutdown));
     }
 
-
+    private static class SystemClockHolder {
+        private static final SystemClock INSTANCE = new SystemClock(1);
+    }
 }
+

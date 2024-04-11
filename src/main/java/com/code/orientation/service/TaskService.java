@@ -42,4 +42,13 @@ public interface TaskService extends IService<Task> {
      * @return {@link Result}<{@link String}>
      */
     Result<String> finish(Long id, Long uid,String material);
+
+    /**
+     * 检测
+     *
+     * @param id  任务id
+     * @param uid 用户id
+     * @return {@link Integer}
+     */
+    Integer detect(Long id, Long uid);
 }

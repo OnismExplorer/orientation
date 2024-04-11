@@ -8,10 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.code.orientation.common.Result;
 import com.code.orientation.constants.CodeEnum;
-import com.code.orientation.entity.PointsLog;
-import com.code.orientation.entity.Student;
-import com.code.orientation.entity.Task;
-import com.code.orientation.entity.TaskLog;
+import com.code.orientation.entity.*;
 import com.code.orientation.entity.vo.TaskVO;
 import com.code.orientation.exception.CustomException;
 import com.code.orientation.mapper.TaskMapper;
@@ -139,6 +136,21 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task>
         pointsLogService.save(pointsLog);
         boolean c = studentService.updateById(student);
         return Result.isSuccess(b && c);
+    }
+
+    @Override
+    public Integer detect(Long id, Long uid) {
+        // 判断活动是否存在
+        Long count = lambdaQuery().eq(Task::getId, id).count();
+        if(count == 0) {
+            throw new CustomException(CodeEnum.NOT_FOUND_ACTIVITY);
+        }
+        // 判断是否有该活动记录
+        TaskLog taskLog = taskLogService.lambdaQuery().eq(TaskLog::getUid, uid).eq(TaskLog::getId, id).one();
+        if(taskLog == null) {
+            throw new CustomException(CodeEnum.NOT_FOUND_RECORDING);
+        }
+        return taskLog.getState() == 1 ? 1 : 0;
     }
 }
 

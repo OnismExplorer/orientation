@@ -251,6 +251,21 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity>
         throw new CustomException(CodeEnum.ENCODE_INVALID);
     }
 
+    @Override
+    public Integer detect(Long id, Long uid) {
+        // 判断活动是否存在
+        Long count = lambdaQuery().eq(Activity::getId, id).count();
+        if(count == 0) {
+            throw new CustomException(CodeEnum.NOT_FOUND_ACTIVITY);
+        }
+        // 判断是否有该活动记录
+        ActivityLog activityLog = activityLogService.lambdaQuery().eq(ActivityLog::getUid, uid).eq(ActivityLog::getActivityId, id).one();
+        if(activityLog == null) {
+            throw new CustomException(CodeEnum.NOT_FOUND_RECORDING);
+        }
+        return activityLog.getState() == 1 ? 1 : 0;
+    }
+
 }
 
 

@@ -73,4 +73,13 @@ public interface ActivityService extends IService<Activity> {
      * @return {@link Boolean}
      */
     Boolean decode(Long id,String content);
+
+    /**
+     * 检测用户活动状态
+     *
+     * @param id  活动id
+     * @param uid UID
+     * @return {@link Integer}
+     */
+    Integer detect(Long id, Long uid);
 }

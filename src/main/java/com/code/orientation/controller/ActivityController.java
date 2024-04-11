@@ -105,4 +105,10 @@ public class ActivityController extends BaseController<ActivityService, Activity
     public Result<String> decode(@RequestParam Long id,@RequestParam String content) {
         return Result.isSuccess(activityService.decode(id,content));
     }
+
+    @Operation(summary = "查询用户活动状态",description = "uid为用户id，id为活动id")
+    @GetMapping("/detect")
+    public Result<Integer> detect(@RequestParam Long id,@RequestParam Long uid) {
+        return Result.success(activityService.detect(id,uid));
+    }
 }

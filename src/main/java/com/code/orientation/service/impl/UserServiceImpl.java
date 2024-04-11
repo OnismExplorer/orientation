@@ -39,11 +39,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     private final UserRoleService  userRoleService;
 
-    @Lazy
     private final StudentService studentService;
 
     private final RoleService roleService;
 
+    @Lazy
     @Autowired
     public UserServiceImpl(RedisUtil redisUtil, UserRoleService userRoleService, StudentService studentService, RoleService roleService) {
         this.redisUtil = redisUtil;
