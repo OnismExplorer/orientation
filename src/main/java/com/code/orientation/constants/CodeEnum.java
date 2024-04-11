@@ -105,7 +105,8 @@ public enum CodeEnum {
     FILE_NOT_FOUND(279,"文件不存在！"),
     PARSING_FAILED(222, "图片解析失败"),
     ENCODE_OVERDUE(228,"二维码已过期，请重新扫描！" ),
-    ENCODE_INVALID(276, "此二维码无效！");
+    ENCODE_INVALID(276, "此二维码无效！"),
+    NOT_FOUND_RECORDING(211,"没有发现此条记录！" );
 
     private final int code;
     private final String msg;
