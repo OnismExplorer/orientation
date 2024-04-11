@@ -1,6 +1,7 @@
 package com.code.orientation.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.code.orientation.common.PageInfo;
@@ -12,18 +13,28 @@ import com.code.orientation.exception.CustomException;
 import com.code.orientation.service.ActivityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 活动管理
+ * @author HeXin
+ * @date 2024/04/10
+ */
 @Tag(name = "活动模块")
 @RestController
 @SaCheckLogin
 @RequestMapping("/activity")
 public class ActivityController extends BaseController<ActivityService, Activity, ActivityDTO, Long> {
 
+    private final ActivityService activityService;
+
     @Autowired
-    private ActivityService activityService;
+    public ActivityController(ActivityService activityService) {
+        this.activityService = activityService;
+    }
 
     @Operation(summary = "获取活动分页信息",description = "key为搜索关键词，type为排序规则，默认为-1，按活动开始时间倒序排序，0按开始时间升序排序，1和2为按积分数升降序排序")
     @GetMapping("/page")
@@ -80,5 +91,18 @@ public class ActivityController extends BaseController<ActivityService, Activity
     @PostMapping()
     public Result<Void> save(@RequestBody ActivityDTO instance) {
         return Result.isSuccess(activityService.save(instance));
+    }
+
+    @Operation(summary = "生成活动二维码",description = "id为活动id")
+    @GetMapping("/encode")
+    @SaIgnore
+    public Result<String> encode(@RequestParam Long id,HttpServletResponse response){
+        return Result.isSuccess(activityService.encode(id,response));
+    }
+
+    @Operation(summary = "校验二维码",description = "id为活动id，content为二维码扫描返回结果")
+    @GetMapping("/decode")
+    public Result<String> decode(@RequestParam Long id,@RequestParam String content) {
+        return Result.isSuccess(activityService.decode(id,content));
     }
 }

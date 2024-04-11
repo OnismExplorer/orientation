@@ -1,6 +1,5 @@
 package com.code.orientation.entity.dto;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.code.orientation.entity.Permission;
 import com.code.orientation.entity.base.ConverEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,9 +7,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.util.Collections;
-import java.util.List;
-
+/**
+ * 权限 DTO
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)

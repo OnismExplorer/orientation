@@ -1,6 +1,7 @@
 package com.code.orientation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.code.orientation.common.Result;
 import com.code.orientation.entity.User;
 import com.code.orientation.entity.dto.LoginParam;
 import com.code.orientation.entity.dto.UserDTO;
@@ -23,4 +24,20 @@ public interface UserService extends IService<User> {
     Boolean unbindRole(Long userId, Long roleId);
 
     User appendInfo(User user);
+
+    /**
+     * 删除用户
+     *
+     * @param id 编号
+     * @return {@link Boolean}
+     */
+    Boolean delete(Long id);
+
+    /**
+     * 新增
+     *
+     * @param instance 实例
+     * @return {@link Result}<{@link Void}>
+     */
+    Result<Void> save(UserDTO instance);
 }

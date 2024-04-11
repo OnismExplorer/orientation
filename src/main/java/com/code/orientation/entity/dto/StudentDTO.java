@@ -9,6 +9,12 @@ import lombok.experimental.Accessors;
 
 import java.util.Map;
 
+/**
+ * 学生 DTO
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)

@@ -25,8 +25,12 @@ import java.util.Set;
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission>
         implements PermissionService {
 
+    private final RolePermissionService rolePermissionService;
+
     @Autowired
-    private RolePermissionService rolePermissionService;
+    public PermissionServiceImpl(RolePermissionService rolePermissionService) {
+        this.rolePermissionService = rolePermissionService;
+    }
 
     @Override
     public List<Permission> getChildren(String parentId) {

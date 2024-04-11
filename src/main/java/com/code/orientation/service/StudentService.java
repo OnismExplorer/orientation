@@ -3,6 +3,7 @@ package com.code.orientation.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.code.orientation.entity.Student;
+import com.code.orientation.entity.dto.RegisterDTO;
 import com.code.orientation.entity.dto.StudentExcelDTO;
 import com.code.orientation.entity.vo.StudentVO;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,4 +35,20 @@ public interface StudentService extends IService<Student> {
      * @return {@link Boolean}
      */
     Boolean upload(MultipartFile file);
+
+    /**
+     * 注册
+     *
+     * @param registerDTO 寄存器DTO
+     * @return {@link Boolean}
+     */
+    Boolean register(RegisterDTO registerDTO);
+
+    /**
+     * 通过UID获取
+     *
+     * @param uid UID 接口
+     * @return {@link StudentVO}
+     */
+    StudentVO getByUID(Long uid);
 }

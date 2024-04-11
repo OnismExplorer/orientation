@@ -37,7 +37,7 @@ public abstract class AbstractController {
      *
      * @return {@link Result}
      */
-    public Result<?> fail() {
+    public Result<String> fail() {
         return Result.fail();
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractController {
      * @param message 消息
      * @return {@link Result}<{@link ?}>
      */
-    public Result fail(String message) {
+    public Result<String> fail(String message) {
         return Result.fail(message);
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractController {
      * @param codeEnum 结果枚举
      * @return {@link Result}<{@link ?}>
      */
-    public Result<?> result(CodeEnum codeEnum) {
+    public Result<String> result(CodeEnum codeEnum) {
         return Result.result(codeEnum);
     }
 }

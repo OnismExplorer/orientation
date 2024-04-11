@@ -3,7 +3,7 @@ package com.code.orientation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.code.orientation.entity.Activity;
 import com.code.orientation.entity.dto.ActivityDTO;
-import org.springframework.scheduling.annotation.Scheduled;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * @description 针对表【activity】的数据库操作Service
@@ -55,4 +55,22 @@ public interface ActivityService extends IService<Activity> {
      * @return {@link Boolean}
      */
     Boolean save(ActivityDTO instance);
+
+    /**
+     * 生成二维码
+     *
+     * @param id       活动id
+     * @param response 响应
+     * @return {@link Boolean}
+     */
+    Boolean encode(Long id,HttpServletResponse response);
+
+    /**
+     * 解析二维码
+     *
+     * @param id      同上
+     * @param content 内容
+     * @return {@link Boolean}
+     */
+    Boolean decode(Long id,String content);
 }

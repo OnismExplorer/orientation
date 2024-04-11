@@ -35,6 +35,13 @@ public class Academy extends BaseEntity implements Serializable {
     @TableField(value = "`name`")
     @Schema(description = "学院名称")
     private String name;
+
+    /**
+     * 学院logo
+     */
+    @TableField(value = "`coverd`")
+    @Schema(description = "学院logo")
+    private String coverd;
     /**
      * 学院描述
      */

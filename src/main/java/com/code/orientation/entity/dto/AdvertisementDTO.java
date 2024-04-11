@@ -7,6 +7,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+/**
+ * 广告 DTO
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)

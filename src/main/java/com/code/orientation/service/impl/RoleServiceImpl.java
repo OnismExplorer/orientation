@@ -27,11 +27,15 @@ import java.util.List;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         implements RoleService {
 
-    @Autowired
-    private UserRoleService userRoleService;
+    private final UserRoleService userRoleService;
+
+    private final RolePermissionService rolePermissionService;
 
     @Autowired
-    private RolePermissionService rolePermissionService;
+    public RoleServiceImpl(UserRoleService userRoleService, RolePermissionService rolePermissionService) {
+        this.userRoleService = userRoleService;
+        this.rolePermissionService = rolePermissionService;
+    }
 
     @Override
     @Cache(constants = RedisConstants.USER_ROLE)

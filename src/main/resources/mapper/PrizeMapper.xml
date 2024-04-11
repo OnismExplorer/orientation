@@ -5,8 +5,9 @@
 <mapper namespace="com.code.orientation.mapper.PrizeMapper">
 
     <resultMap id="BaseResultMap" type="com.code.orientation.entity.Prize">
-            <id property="id" column="id" jdbcType="INTEGER"/>
+            <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="coverd" column="coverd" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>
             <result property="price" column="price" jdbcType="INTEGER"/>
             <result property="inventory" column="inventory" jdbcType="INTEGER"/>
@@ -20,9 +21,10 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,description,
-        price,inventory,limited,
-        state,gmt_create,gmt_modified,
-        create_by,update_by,is_deleted
+        id,name,coverd,
+        description,price,inventory,
+        limited,state,gmt_create,
+        gmt_modified,create_by,update_by,
+        is_deleted
     </sql>
 </mapper>

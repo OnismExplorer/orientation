@@ -7,6 +7,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+/**
+ * 学院 DTO
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
@@ -15,6 +21,9 @@ public class AcademyDTO extends ConverEntity<Academy> {
 
     @Schema(description = "学院名称")
     private String name;
+
+    @Schema(description = "学院logo")
+    private String coverd;
 
     @Schema(description = "学院描述")
     private String illustration;

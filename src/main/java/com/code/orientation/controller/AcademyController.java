@@ -8,22 +8,31 @@ import com.code.orientation.common.Result;
 import com.code.orientation.controller.base.BaseController;
 import com.code.orientation.entity.Academy;
 import com.code.orientation.entity.dto.AcademyDTO;
+import com.code.orientation.entity.vo.StudentCount;
 import com.code.orientation.exception.CustomException;
 import com.code.orientation.service.AcademyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 学院管理
+ * @author HeXin
+ * @date 2024/04/10
+ */
 @Tag(name = "学院模块")
 @RestController
 @RequestMapping("/academy")
 public class AcademyController extends BaseController<AcademyService, Academy, AcademyDTO, Long> {
 
+    private final AcademyService academyService;
+
     @Autowired
-    private AcademyService academyService;
+    public AcademyController(AcademyService academyService) {
+        this.academyService = academyService;
+    }
 
     @Override
     @Operation(summary = "保存学院信息",description = "保存学院信息")
@@ -59,6 +68,12 @@ public class AcademyController extends BaseController<AcademyService, Academy, A
         }
 
         return Result.page(wrapper.page(new Page<>(pageNum, pageSize)));
+    }
+
+    @Operation(summary = "学院目前实际人数")
+    @GetMapping("/student/count")
+    public Result<StudentCount> getStudentCount(@RequestParam Long id) {
+        return Result.success(academyService.count(id));
     }
 
     @Override

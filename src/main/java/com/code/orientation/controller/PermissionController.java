@@ -14,12 +14,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 权限控制器
+ * 管理
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Tag(name = "权限管理")
 @RestController
 @RequestMapping("/user/permission")
 public class PermissionController {
+    private final PermissionService permissionService;
+
     @Autowired
-    private PermissionService permissionService;
+    public PermissionController(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
 
     @SaCheckPermission("admin.permission.add")
     @Operation(summary = "增加权限",description = "权限：admin.permission.add")

@@ -4,7 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,28 +31,39 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 用户管理
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Tag(name = "用户模块")
 @RestController
 @SaCheckLogin
 @RequestMapping("/user")
 public class UserController extends BaseController<UserService, User, UserDTO, Long> {
+
+    private final UserService userService;
+
+    private final RoleService roleService;
+
+    private final EmailUtils emailUtils;
+
+    private final RedisUtil redisUtil;
+
+    @Autowired
+    public UserController(UserService userService, RoleService roleService, EmailUtils emailUtils, RedisUtil redisUtil) {
+        this.userService = userService;
+        this.roleService = roleService;
+        this.emailUtils = emailUtils;
+        this.redisUtil = redisUtil;
+    }
+
     @Override
     @PostMapping()
     public Result<Void> save(@RequestBody  UserDTO instance) {
-        return super.save(instance.setPassword(PasswordUtils.encrypt(instance.getPassword())));
+        return userService.save(instance);
     }
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private EmailUtils emailUtils;
-
-    @Autowired
-    private RedisUtil redisUtil;
 
     @Operation(summary = "登录")
     @SaIgnore
@@ -68,6 +78,12 @@ public class UserController extends BaseController<UserService, User, UserDTO, L
     public Result<String> logout(){
         StpUtil.logout(StpUtil.getLoginId());
         return Result.success();
+    }
+
+    @Override
+    @DeleteMapping()
+    public Result<Void> delete(@RequestParam Long id) {
+        return Result.isSuccess(userService.delete(id));
     }
 
     @Operation(summary = "发送验证码")
@@ -86,7 +102,7 @@ public class UserController extends BaseController<UserService, User, UserDTO, L
     @Operation(summary = "注册账号")
     @SaIgnore
     @PostMapping("/regist")
-    public Result regist(@RequestBody UserDTO dto, @RequestParam("code") String code){
+    public Result<String> regist(@RequestBody UserDTO dto, @RequestParam("code") String code){
         return Result.isSuccess(userService.regist(dto,code));
     }
 
@@ -142,7 +158,7 @@ public class UserController extends BaseController<UserService, User, UserDTO, L
     @PutMapping("/update/password")
     public Result<String> updatePassword(@RequestBody PasswordDTO passwordDTO){
         User user = userService.getById(StpUtil.getLoginIdAsString());
-        if(!PasswordUtils.match(passwordDTO.oldPassword(),user.getPassword())){
+        if(PasswordUtils.match(passwordDTO.oldPassword(), user.getPassword())){
             return Result.fail(CodeEnum.PASSWORD_ERROR);
         }
         if(!passwordDTO.confirmPassword().equals(passwordDTO.newPassword())){
@@ -179,7 +195,7 @@ public class UserController extends BaseController<UserService, User, UserDTO, L
     @PutMapping("/update")
     public Result<Void> update(@RequestBody User user){
         User u = userService.getById(user.getId());
-        if(!PasswordUtils.match(user.getPassword(), u.getPassword())){
+        if(PasswordUtils.match(user.getPassword(), u.getPassword())){
             user.setPassword(PasswordUtils.encrypt(user.getPassword()));
         }
         return Result.isSuccess(userService.updateById(user));

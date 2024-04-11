@@ -7,6 +7,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+/**
+ * 奖品 DTO
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
@@ -17,6 +23,9 @@ public class PrizeDTO extends ConverEntity<Prize> {
      */
     @Schema(description = "奖品名称")
     private String name;
+
+    @Schema(description = "奖品图片")
+    private String coverd;
 
     /**
      * 奖品描述

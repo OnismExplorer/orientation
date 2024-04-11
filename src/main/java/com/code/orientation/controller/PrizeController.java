@@ -15,13 +15,23 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 奖品管理
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Tag(name = "奖品模块", description = "积分兑换奖品")
 @RestController
 @RequestMapping("/prize")
 public class PrizeController extends BaseController<PrizeService, Prize, PrizeDTO, Long> {
 
+    private final PrizeService prizeService;
+
     @Autowired
-    private PrizeService prizeService;
+    public PrizeController(PrizeService prizeService) {
+        this.prizeService = prizeService;
+    }
 
     @Operation(summary = "获取奖品分页列表", description = "type为排序规则，默认(-1)按库存升序，0按库存降序，1按价格升序，2按价格降序")
     @GetMapping("/page")

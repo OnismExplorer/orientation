@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.code.orientation.constants.CodeEnum;
 import com.code.orientation.entity.*;
+import com.code.orientation.entity.dto.RegisterDTO;
 import com.code.orientation.entity.dto.StudentExcelDTO;
 import com.code.orientation.entity.vo.StudentVO;
 import com.code.orientation.exception.CustomException;
@@ -17,6 +18,7 @@ import com.code.orientation.service.*;
 import com.code.orientation.utils.PasswordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,17 +37,23 @@ import java.util.stream.Collectors;
 public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
         implements StudentService {
 
-    @Autowired
-    private AcademyService academyService;
+    @Lazy
+    private final AcademyService academyService;
+
+    private final UserService userService;
+
+    private final UserRoleService userRoleService;
+
+    private final RoleService roleService;
 
     @Autowired
-    private UserService userService;
+    public StudentServiceImpl(AcademyService academyService, UserService userService, UserRoleService userRoleService, RoleService roleService) {
+        this.academyService = academyService;
+        this.userService = userService;
+        this.userRoleService = userRoleService;
+        this.roleService = roleService;
+    }
 
-    @Autowired
-    private UserRoleService userRoleService;
-
-    @Autowired
-    private RoleService roleService;
     @Override
     public IPage<StudentVO> page(Long pageNum, Long pageSize, String key, Integer type, Boolean isAdmin) {
         // 查询关键词对应的学院信息
@@ -106,7 +114,8 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
         // 获取学生学院id
         List<Long> departmentIdList = list.stream().map(Student::getDepartmentId).toList();
         // 获取学生头像
-        Map<Long, String> userMap = userService.listByIds(uidList).stream().collect(Collectors.toMap(User::getId, User::getAvatar ));
+        List<User> users = userService.listByIds(uidList);
+        Map<Long, String> userMap = users.stream().collect(Collectors.toMap(User::getId, User::getAvatar ));
         // 获取学生学院
         Map<Long, String> academyMap = academyService.listByIds(departmentIdList).stream().collect(Collectors.toMap(Academy::getId, Academy::getName));
         return list.stream().map(student -> new StudentVO()
@@ -132,6 +141,7 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
                 .setPassword(PasswordUtils.encrypt(password))
                 .setType(0)
                 .setPhone(student.getContact().get("phone"))
+                .setState(0)
                 .setEmail(student.getContact().get("email"));
         boolean u = userService.save(user);
         student.setUid(user.getId());
@@ -157,6 +167,54 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student>
             throw new CustomException(CodeEnum.SYSTEM_ERROR);
         }
         return true;
+    }
+
+    @Override
+    public Boolean register(RegisterDTO registerDTO) {
+        // 获取学院
+        Academy academy = academyService.lambdaQuery().eq(Academy::getName, registerDTO.getDepartmentName()).one();
+        if(academy == null) {
+            throw new CustomException(CodeEnum.NOT_FOUND_ACADEMY);
+        }
+        // 获取学生信息
+        Student student = lambdaQuery().eq(Student::getName, registerDTO.getUsername())
+                .eq(Student::getAdmissionLetter, registerDTO.getAdmissionLetter())
+                .eq(Student::getIdentityCard, registerDTO.getIdentityCard())
+                .eq(Student::getDepartmentId, academy.getId()).one();
+        if(student == null){
+            throw new CustomException(CodeEnum.NOT_FOUND_STUDENT);
+        }
+        // 获取学生对应用户信息
+        User user = userService.getById(student.getUid());
+        // 如果已经报道
+        if(student.getState().equals(1) || user.getState().equals(1)) {
+            throw new CustomException(CodeEnum.ALREADY_REGISTERED);
+        }
+        return userService.updateById(user.setState(1));
+    }
+
+    @Override
+    public StudentVO getByUID(Long uid) {
+        // 查询
+        Student student = lambdaQuery().eq(Student::getUid, uid).one();
+        if(student == null) {
+            throw new CustomException(CodeEnum.NOT_FOUND_STUDENT);
+        }
+        User user = userService.getById(uid);
+        // 学院信息
+        Academy academy = academyService.getById(student.getDepartmentId());
+        StudentVO studentVO = new StudentVO();
+        studentVO.setAvatar(user.getAvatar())
+                .setPoints(student.getPoints())
+                .setId(student.getId())
+                .setSex(student.getSex() == 0 ? '女':'男')
+                .setName(student.getName())
+                .setDepartment(academy.getName())
+                .setState(student.getState() == 1 ? "已报道" : "未报道")
+                .setAdmissionLetter(student.getAdmissionLetter())
+                .setContact(student.getContact())
+                .setIdentityCard(student.getIdentityCard());
+        return studentVO;
     }
 
     /**

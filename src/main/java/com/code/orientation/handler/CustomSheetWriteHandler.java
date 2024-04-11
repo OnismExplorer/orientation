@@ -20,7 +20,7 @@ public class CustomSheetWriteHandler implements SheetWriteHandler {
 
     @Override
     public void beforeSheetCreate(WriteWorkbookHolder writeWorkbookHolder, WriteSheetHolder writeSheetHolder) {
-
+        // do nothing
     }
 
     @Override

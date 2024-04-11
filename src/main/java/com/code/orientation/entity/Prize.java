@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.code.orientation.entity.base.BaseEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -32,6 +33,10 @@ public class Prize extends BaseEntity implements Serializable {
      */
     @TableField(value = "`name`")
     private String name;
+
+    @TableField(value = "`coverd`")
+    @Schema(description = "奖品图片")
+    private String coverd;
 
     /**
      * 奖品描述

@@ -7,6 +7,12 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 活动 DTO
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Data
 public class ActivityDTO extends ConverEntity<Activity> {
 
@@ -16,6 +22,9 @@ public class ActivityDTO extends ConverEntity<Activity> {
 
     @Schema(description = "活动内容")
     private String content;
+
+    @Schema(description = "活动封面")
+    private String coverd;
 
     @Schema(description = "开始时间")
     private Date start;

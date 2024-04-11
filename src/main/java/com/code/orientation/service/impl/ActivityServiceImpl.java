@@ -2,7 +2,9 @@ package com.code.orientation.service.impl;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.code.orientation.constants.CodeEnum;
 import com.code.orientation.constants.RedisConstants;
 import com.code.orientation.entity.Activity;
 import com.code.orientation.entity.ActivityLog;
@@ -15,10 +17,14 @@ import com.code.orientation.service.ActivityLogService;
 import com.code.orientation.service.ActivityService;
 import com.code.orientation.service.PointsLogService;
 import com.code.orientation.service.StudentService;
+import com.code.orientation.utils.QRCodeUtil;
 import com.code.orientation.utils.RedisUtil;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -35,17 +41,24 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity>
      */
     private static final Integer MAX_PARTICIPATION_COUNT = 3;
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
+
+    private final ActivityLogService activityLogService;
+
+    private final PointsLogService pointsLogService;
+
+    private final RedisUtil redisUtil;
+
+    private final QRCodeUtil qrCodeUtil;
 
     @Autowired
-    private ActivityLogService activityLogService;
-
-    @Autowired
-    private PointsLogService pointsLogService;
-
-    @Autowired
-    private RedisUtil redisUtil;
+    public ActivityServiceImpl(StudentService studentService, ActivityLogService activityLogService, PointsLogService pointsLogService, RedisUtil redisUtil, QRCodeUtil qrCodeUtil) {
+        this.studentService = studentService;
+        this.activityLogService = activityLogService;
+        this.pointsLogService = pointsLogService;
+        this.redisUtil = redisUtil;
+        this.qrCodeUtil = qrCodeUtil;
+    }
 
     @Override
     public Boolean finish(Long uid, Long id) {
@@ -62,6 +75,9 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity>
         }
         // 获取该活动
         Activity activity = getById(id);
+        if(activity == null) {
+            throw new CustomException(CodeEnum.NOT_FOUND_ACTIVITY);
+        }
         // 判断活动是否已经过期
         if (activity.getEnd().before(new Date())) {
             throw new CustomException("活动已经结束！", 233);
@@ -100,15 +116,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity>
     @Override
     public void begin(Long id, Long uid) {
         // 获取该活动
-        Activity activity = getById(id);
-        // 判断活动是否已经开始
-        if (activity.getStart().after(new Date())) {
-            throw new CustomException("活动未开始！", 222);
-        }
-        // 判断活动是否已经过期
-        if (activity.getEnd().before(new Date())) {
-            throw new CustomException("活动已经结束！", 233);
-        }
+        Activity activity = getActivity(id);
         // 判断该用户是否已经开启活动
         Long count = activityLogService.lambdaQuery().eq(ActivityLog::getActivityId, id).eq(ActivityLog::getUid, uid).count();
         if (count >= MAX_PARTICIPATION_COUNT) {
@@ -143,10 +151,11 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity>
         updateById(activity);
     }
 
-    @Override
-    public void cancel(Long id, Long uid) {
-        // 获取该活动获取该活动
+    private Activity getActivity(Long id) {
         Activity activity = getById(id);
+        if(activity == null) {
+            throw new CustomException(CodeEnum.NOT_FOUND_ACTIVITY);
+        }
         // 判断活动是否已经开始
         if (activity.getStart().after(new Date())) {
             throw new CustomException("活动未开始！", 222);
@@ -155,6 +164,13 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity>
         if (activity.getEnd().before(new Date())) {
             throw new CustomException("活动已经结束！", 233);
         }
+        return activity;
+    }
+
+    @Override
+    public void cancel(Long id, Long uid) {
+        // 获取该活动获取该活动
+        Activity activity = getActivity(id);
         // 获取活动记录
         ActivityLog activityLog = activityLogService.lambdaQuery()
                 .eq(ActivityLog::getActivityId, id)
@@ -203,7 +219,40 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity>
         throw new CustomException("活动结束时间不能为空",288);
     }
 
+    @Override
+    public Boolean encode(Long id,HttpServletResponse response) {
+        // 判断活动是否存在
+        getActivity(id);
+        // 添加二维码内容
+        String content = RandomUtil.randomString(30);
+        // 将内容缓存起来
+        redisUtil.set(RedisConstants.ACTIVITY_ENCODE, String.valueOf(id),content);
+        // 添加图片 logo(团队logo)
+        String imagPath = "https://fingerbed.oss-cn-chengdu.aliyuncs.com/CSDN/202404092011157.png";
+        try {
+            qrCodeUtil.encode(content,imagPath,true,response.getOutputStream());
+        } catch (IOException e) {
+            throw new CustomException(e);
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean decode(Long id,String content) {
+        // 从缓存中获取二维码信息
+        String str = redisUtil.get(RedisConstants.ACTIVITY_ENCODE.getKey() + id, String.class);
+        if(StringUtils.isBlank(str)) {
+            throw new CustomException(CodeEnum.ENCODE_OVERDUE);
+        }
+        // 比对内容
+        if(str.equals(content)) {
+            return true;
+        }
+        throw new CustomException(CodeEnum.ENCODE_INVALID);
+    }
+
 }
+
 
 
 

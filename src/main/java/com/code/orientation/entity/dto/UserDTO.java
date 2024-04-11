@@ -24,7 +24,7 @@ public class UserDTO extends ConverEntity<User> {
     private String email;
     @Schema(description = "手机号")
     private String phone;
-    @Schema(description = "用户类型")
+    @Schema(description = "用户类型(0：学生，1：非学生)")
     private Integer type;
     @Schema(description = "用户状态(0：禁用 1：启用，默认为1)")
     private Integer state;

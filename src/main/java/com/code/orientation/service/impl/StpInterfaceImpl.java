@@ -4,12 +4,9 @@ import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.code.orientation.constants.RedisConstants;
-import com.code.orientation.entity.User;
 import com.code.orientation.service.PermissionService;
 import com.code.orientation.service.RoleService;
-import com.code.orientation.service.UserService;
 import com.code.orientation.utils.RedisUtil;
-import com.code.orientation.utils.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,14 +20,18 @@ import java.util.List;
 @Component
 public class StpInterfaceImpl implements StpInterface {
 
-    @Autowired
-    private PermissionService permissionService;
+    private final PermissionService permissionService;
+
+    private final RoleService roleService;
+
+    private final RedisUtil redisUtil;
 
     @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private RedisUtil redisUtil;
+    public StpInterfaceImpl(PermissionService permissionService, RoleService roleService, RedisUtil redisUtil) {
+        this.permissionService = permissionService;
+        this.roleService = roleService;
+        this.redisUtil = redisUtil;
+    }
 
     @Override
 //    @Cache(constants = RedisConstants.USER_PERMISSION)

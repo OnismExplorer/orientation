@@ -6,6 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * 学生 Excel DTO
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Data
 @EqualsAndHashCode
 public class StudentExcelDTO {

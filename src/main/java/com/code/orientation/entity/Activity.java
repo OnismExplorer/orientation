@@ -33,8 +33,8 @@ public class Activity extends BaseEntity implements Serializable {
     private Long id;
 
     /**
-      * 活动名称
-      */
+     * 活动名称
+     */
     @TableField(value = "`name`")
     @Schema(description = "活动名称")
     private String name;
@@ -45,6 +45,13 @@ public class Activity extends BaseEntity implements Serializable {
     @TableField(value = "`content`")
     @Schema(description = "活动内容")
     private String content;
+
+    /**
+     * 活动封面
+     */
+    @TableField(value = "`coverd`")
+    @Schema(description = "活动封面")
+    private String coverd;
 
     /**
      * 活动开始时间

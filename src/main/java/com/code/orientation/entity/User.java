@@ -66,10 +66,10 @@ public class User extends BaseEntity implements Serializable {
     @Schema(description = "手机号")
     private String phone;
     /**
-     * 用户类型
+     * 用户类型(0：学生，1：非学生)
      */
     @TableField(value = "`type`")
-    @Schema(description = "用户类型")
+    @Schema(description = "用户类型(0：学生，1：非学生)")
     private Integer type;
     /**
      * 用户状态(0：禁用 1：启用，默认为1)

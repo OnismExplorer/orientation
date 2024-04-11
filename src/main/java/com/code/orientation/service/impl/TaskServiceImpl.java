@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.code.orientation.common.Result;
+import com.code.orientation.constants.CodeEnum;
 import com.code.orientation.entity.PointsLog;
 import com.code.orientation.entity.Student;
 import com.code.orientation.entity.Task;
@@ -34,14 +35,18 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task>
         implements TaskService {
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
+
+    private final TaskLogService taskLogService;
+
+    private final PointsLogService pointsLogService;
 
     @Autowired
-    private TaskLogService taskLogService;
-
-    @Autowired
-    private PointsLogService pointsLogService;
+    public TaskServiceImpl(StudentService studentService, TaskLogService taskLogService, PointsLogService pointsLogService) {
+        this.studentService = studentService;
+        this.taskLogService = taskLogService;
+        this.pointsLogService = pointsLogService;
+    }
 
     @Override
     public IPage<TaskVO> page(Long pageNum, Long pageSize, String key, Integer type) {
@@ -81,6 +86,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task>
     @Override
     public Result<String> begin(Long uid, Long id) {
         Task task = getById(id);
+        if(task == null) {
+            throw new CustomException(CodeEnum.NOT_FOUND_TASK);
+        }
         // 判断该任务是否在时间范围内
         if(DateUtil.compare(task.getStart(),new Date()) > 0 && task.getStart() != null){
             return Result.fail(262,"任务未开始！");
@@ -89,7 +97,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task>
         }
         // 判断该任务是否有父任务
         if(task.getParentId() != null || task.getType().equals(1)){
-            return Result.fail(265,"请先完成任务："+getById(task.getParentId()));
+            return Result.fail(265,"请先完成任务："+getById(task.getParentId()).getName());
         }
         // 查看用户是否正在进行该任务
         Long count = taskLogService.lambdaQuery().eq(TaskLog::getUid, uid).eq(TaskLog::getTaskId, id).count();
@@ -105,6 +113,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task>
     public Result<String> finish(Long id, Long uid,String material) {
         // 判断任务是否超时
         Task task = getById(id);
+        if(task == null) {
+            throw new CustomException(CodeEnum.NOT_FOUND_TASK);
+        }
         if(DateUtil.compare(new Date(),task.getEnd()) > 0 && task.getEnd() != null){
             return Result.fail(288,"任务已过期！");
         }

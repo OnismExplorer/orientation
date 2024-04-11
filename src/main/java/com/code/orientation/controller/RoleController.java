@@ -12,16 +12,24 @@ import com.code.orientation.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 角色管理
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Tag(name = "角色管理")
 @RestController
 @RequestMapping("/user/role")
 public class RoleController {
     private final RoleService roleService;
 
+    @Autowired
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }

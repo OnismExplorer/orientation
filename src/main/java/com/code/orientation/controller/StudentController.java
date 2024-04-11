@@ -7,16 +7,17 @@ import com.code.orientation.common.Result;
 import com.code.orientation.constants.CodeEnum;
 import com.code.orientation.controller.base.BaseController;
 import com.code.orientation.entity.Student;
-import com.code.orientation.entity.dto.StudentExcelDTO;
-import com.code.orientation.utils.ExcelUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import com.code.orientation.entity.User;
+import com.code.orientation.entity.dto.RegisterDTO;
 import com.code.orientation.entity.dto.StudentDTO;
+import com.code.orientation.entity.dto.StudentExcelDTO;
 import com.code.orientation.entity.vo.StudentVO;
 import com.code.orientation.service.StudentService;
 import com.code.orientation.service.UserService;
+import com.code.orientation.utils.ExcelUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,18 +25,28 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 学生管理
+ * @author HeXin
+ * @date 2024/04/10
+ */
 @Tag(name = "学生模块")
 @RestController
 @RequestMapping("/student")
 public class StudentController extends BaseController<StudentService, Student, StudentDTO, Long> {
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
+
+    private final UserService userService;
 
     @Autowired
-    private UserService userService;
+    public StudentController(StudentService studentService, UserService userService) {
+        this.studentService = studentService;
+        this.userService = userService;
+    }
 
     @Override
+    @Operation(summary = "保存学生信息")
     @PostMapping()
     @SaCheckPermission(value = {"admin.student.add","teacher.student.add"},mode = SaMode.OR)
     public Result<Void> save(@RequestBody StudentDTO instance) {
@@ -94,5 +105,17 @@ public class StudentController extends BaseController<StudentService, Student, S
     @GetMapping("/rank/list")
     public Result<List<StudentVO>> rankList() {
         return Result.success(studentService.rankList());
+    }
+
+    @Operation(summary = "学生注册")
+    @PatchMapping("/register")
+    public Result<String> register(@RequestBody RegisterDTO registerDTO){
+        return Result.isSuccess(studentService.register(registerDTO));
+    }
+
+    @Operation(summary = "根据uid查询学生信息")
+    @GetMapping("/student/{uid}")
+    public Result<StudentVO> getByUID(@PathVariable Long uid) {
+        return Result.success(studentService.getByUID(uid));
     }
 }

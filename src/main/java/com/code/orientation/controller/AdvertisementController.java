@@ -15,14 +15,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 广告管理
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Tag(name = "广告模块")
 @RestController
 @RequestMapping("/ad")
 public class AdvertisementController
         extends BaseController<AdvertisementService, Advertisement, AdvertisementDTO, Long> {
 
+    private final AdvertisementService advertisementService;
+
     @Autowired
-    private AdvertisementService advertisementService;
+    public AdvertisementController(AdvertisementService advertisementService) {
+        this.advertisementService = advertisementService;
+    }
 
     @Operation(summary = "赞助商分页信息",description = "key为搜索关键词，默认按优先级排序，没有别的排序方式")
     @GetMapping("/page")

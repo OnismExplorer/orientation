@@ -13,13 +13,23 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 任务管理
+ *
+ * @author HeXin
+ * @date 2024/04/11
+ */
 @Tag(name = "任务模块")
 @RestController
 @RequestMapping("/task")
 public class TaskController extends BaseController<TaskService, Task, TaskDTO, Long> {
 
+    private final TaskService taskService;
+
     @Autowired
-    private TaskService taskService;
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @Override
     @Operation(summary = "id查询")

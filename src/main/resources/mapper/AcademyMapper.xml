@@ -5,22 +5,23 @@
 <mapper namespace="com.code.orientation.mapper.AcademyMapper">
 
     <resultMap id="BaseResultMap" type="com.code.orientation.entity.Academy">
-        <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="illustration" column="illustration" jdbcType="VARCHAR"/>
-        <result property="studentCount" column="student_count" jdbcType="INTEGER"/>
-        <result property="priority" column="priority" jdbcType="TINYINT"/>
-        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
-        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
-        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
-        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
-        <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="coverd" column="coverd" jdbcType="VARCHAR"/>
+            <result property="illustration" column="illustration" jdbcType="VARCHAR"/>
+            <result property="studentCount" column="student_count" jdbcType="INTEGER"/>
+            <result property="priority" column="priority" jdbcType="TINYINT"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,illustration,
-        student_count,priority,gmt_create,
-        gmt_modified,create_by,update_by,
-        is_deleted
+        id,name,coverd,
+        illustration,student_count,priority,
+        gmt_create,gmt_modified,create_by,
+        update_by,is_deleted
     </sql>
 </mapper>
